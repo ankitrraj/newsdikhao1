@@ -1,35 +1,45 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, Zap, Clock } from "lucide-react"
+import { ArrowRight, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useLatestNews, useBreakingNews, useSliderNews } from "@/hooks/use-news"
+import { useLatestNews, useBreakingNews } from "@/hooks/use-news"
 import NewsSlider from "@/components/news-slider"
 import NewsCard from "@/components/news-card"
 import BreakingNewsTicker from "@/components/breaking-news-ticker"
 
 export default function HomePage() {
   const { news: latestNews, loading: latestLoading } = useLatestNews(10)
-  const { news: breakingNews, loading: breakingLoading } = useBreakingNews(3)
-  const { news: sliderNews, loading: sliderLoading } = useSliderNews()
+  const { news: breakingNews, loading: breakingLoading } = useBreakingNews(5)
 
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Breaking News Ticker */}
       {!breakingLoading && breakingNews.length > 0 && (
-        <BreakingNewsTicker news={breakingNews} />
+        <BreakingNewsTicker news={breakingNews.slice(0, 3)} />
       )}
 
       {/* News Slider */}
-      {!sliderLoading && sliderNews.length > 0 && (
+      {!breakingLoading && breakingNews.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <NewsSlider news={sliderNews} />
+          <NewsSlider news={breakingNews} />
         </div>
       )}
 
-      {/* Latest News Grid */}
+      {/* Latest News Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">ताज़ा खबरें</h2>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">ताज़ा खबरें</h2>
+          <Link href="/latest-news">
+            <Button
+              variant="outline"
+              className="flex items-center space-x-2 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
+            >
+              <span>और पढ़ें</span>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
         
         {latestLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -42,41 +52,10 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {latestNews.map((news) => (
-              <NewsCard key={news.id} news={news} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Latest News Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Clock className="h-8 w-8 text-blue-600" />
-            <h2 className="text-3xl font-bold text-gray-900">ताजा समाचार</h2>
-          </div>
-          <Link href="/latest-news">
-            <Button
-              variant="outline"
-              className="flex items-center space-x-2 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
-            >
-              <span>और पढ़ें</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-
-        {latestNews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {latestNews.map((news) => (
               <NewsCard key={news.id} news={news} />
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">कोई समाचार उपलब्ध नहीं है।</p>
           </div>
         )}
       </section>

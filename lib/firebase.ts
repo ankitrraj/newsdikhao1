@@ -13,21 +13,21 @@ const firebaseConfig = {
   measurementId: "G-PZM8H7QQTB",
 }
 
-// Initialize Firebase only on client-side
-let app;
-let db;
-
-if (typeof window !== "undefined" && !getApps().length) {
-  app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-}
+// Initialize Firebase
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+const db = getFirestore(app);
 
 export { db };
 
 // Analytics को client-side पर initialize करें
 export const initAnalytics = () => {
-  if (typeof window !== "undefined" && app) {
-    return getAnalytics(app)
+  if (typeof window !== "undefined") {
+    try {
+      return getAnalytics(app);
+    } catch (error) {
+      console.error("Analytics initialization error:", error);
+      return null;
+    }
   }
-  return null
+  return null;
 }
