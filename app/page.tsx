@@ -1,39 +1,53 @@
+"use client"
+
 import Link from "next/link"
 import { ArrowRight, Zap, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getLatestNews, getSliderNews, getBreakingNews } from "@/lib/firebase-utils"
+import { useLatestNews, useBreakingNews, useSliderNews } from "@/hooks/use-news"
 import NewsSlider from "@/components/news-slider"
 import NewsCard from "@/components/news-card"
 import BreakingNewsTicker from "@/components/breaking-news-ticker"
 
-export default async function HomePage() {
-  // Get all data with fallbacks
-  const [sliderNews, breakingNews, latestNews, allBreakingNews] = await Promise.allSettled([
-    getSliderNews(),
-    getBreakingNews(10), // Get more for ticker
-    getLatestNews(5), // Only 5 for home page
-    getBreakingNews(5), // Get 5 breaking news for the section
-  ])
-
-  const sliderData = sliderNews.status === "fulfilled" ? sliderNews.value : []
-  const breakingData = breakingNews.status === "fulfilled" ? breakingNews.value : []
-  const latestData = latestNews.status === "fulfilled" ? latestNews.value : []
-  const breakingNewsData = allBreakingNews.status === "fulfilled" ? allBreakingNews.value : []
-
-  // Combine latest and breaking news for ticker (max 8 items)
-  const tickerNews = [
-    ...breakingData, // Breaking news first priority
-    ...latestData.filter((news) => !breakingData.some((breaking) => breaking.id === news.id)), // Add latest news that aren't already breaking
-  ].slice(0, 8) // Limit to 8 items
+export default function HomePage() {
+  const { news: latestNews, loading: latestLoading } = useLatestNews(10)
+  const { news: breakingNews, loading: breakingLoading } = useBreakingNews(3)
+  const { news: sliderNews, loading: sliderLoading } = useSliderNews()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Enhanced Breaking News Ticker */}
-      {tickerNews.length > 0 && <BreakingNewsTicker news={tickerNews} />}
+    <main className="min-h-screen bg-gray-50">
+      {/* Breaking News Ticker */}
+      {!breakingLoading && breakingNews.length > 0 && (
+        <BreakingNewsTicker news={breakingNews} />
+      )}
 
-      {/* Hero Slider */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {sliderData.length > 0 ? <NewsSlider news={sliderData} /> : <NewsSlider news={latestData.slice(0, 5)} />}
+      {/* News Slider */}
+      {!sliderLoading && sliderNews.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <NewsSlider news={sliderNews} />
+        </div>
+      )}
+
+      {/* Latest News Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">ताज़ा खबरें</h2>
+        
+        {latestLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latestNews.map((news) => (
+              <NewsCard key={news.id} news={news} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Latest News Section */}
@@ -54,9 +68,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {latestData.length > 0 ? (
+        {latestNews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {latestData.map((news) => (
+            {latestNews.map((news) => (
               <NewsCard key={news.id} news={news} />
             ))}
           </div>
@@ -85,9 +99,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {breakingNewsData.length > 0 ? (
+        {breakingNews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {breakingNewsData.map((news) => (
+            {breakingNews.map((news) => (
               <NewsCard key={news.id} news={news} />
             ))}
           </div>
@@ -101,6 +115,6 @@ export default async function HomePage() {
           </div>
         )}
       </section>
-    </div>
+    </main>
   )
 }

@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app"
+import { initializeApp, getApps } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
 import { getAnalytics } from "firebase/analytics"
 
@@ -13,12 +13,20 @@ const firebaseConfig = {
   measurementId: "G-PZM8H7QQTB",
 }
 
-const app = initializeApp(firebaseConfig)
-export const db = getFirestore(app)
+// Initialize Firebase only on client-side
+let app;
+let db;
+
+if (typeof window !== "undefined" && !getApps().length) {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+}
+
+export { db };
 
 // Analytics को client-side पर initialize करें
 export const initAnalytics = () => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && app) {
     return getAnalytics(app)
   }
   return null
