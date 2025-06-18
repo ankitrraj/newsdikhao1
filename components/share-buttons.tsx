@@ -40,12 +40,19 @@ export default function ShareButtons({ title, excerpt, imageUrl, url }: ShareBut
   }
 
   const shareOnFacebook = () => {
+    // Get the full URL including the domain
+    const fullUrl = typeof window !== "undefined" 
+      ? window.location.href 
+      : `${process.env.NEXT_PUBLIC_SITE_URL || "https://newsdikhao.com"}/news/${url}`
+
     const fbParams = new URLSearchParams({
-      u: shareUrl,
-      quote: shareText,
-      picture: imageUrl || "",
+      u: fullUrl,
+      // Remove quote parameter as it's not supported by Facebook
+      display: "popup",
+      ref: "plugin",
+      src: "share_button"
     })
-    const fbUrl = `https://www.facebook.com/sharer/sharer.php?${fbParams.toString()}`
+    const fbUrl = `https://www.facebook.com/sharer.php?${fbParams.toString()}`
     window.open(fbUrl, "facebook-share", "width=626,height=436")
   }
 

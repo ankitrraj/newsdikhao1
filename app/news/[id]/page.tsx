@@ -10,6 +10,57 @@ import { Badge } from "@/components/ui/badge"
 import ShareButtons from "@/components/share-buttons"
 import { getNewsById, incrementViewCount } from "@/lib/firebase-utils"
 import type { NewsItem } from "@/lib/types"
+import type { Metadata } from "next"
+
+// Make the page server-side rendered
+export const dynamic = "force-dynamic"
+
+// Generate metadata for the page
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const news = await getNewsById(params.id)
+  if (!news) {
+    return {
+      title: "News Not Found - News Dikhao",
+      description: "The requested news article could not be found."
+    }
+  }
+
+  const fullUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://newsdikhao.com"}/news/${news.id}`
+  
+  return {
+    title: `${news.title} - News Dikhao`,
+    description: news.excerpt,
+    openGraph: {
+      title: news.title,
+      description: news.excerpt,
+      url: fullUrl,
+      siteName: "News Dikhao",
+      images: [
+        {
+          url: news.imageUrl || "/placeholder.svg?height=400&width=800",
+          width: 800,
+          height: 400,
+          alt: news.title,
+        },
+      ],
+      locale: "hi_IN",
+      type: "article",
+      authors: news.author,
+      publishedTime: news.createdAt.toISOString(),
+      modifiedTime: news.updatedAt.toISOString(),
+      section: news.category,
+      tags: news.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@NewsDikhao",
+      creator: `@${news.author}`,
+      title: news.title,
+      description: news.excerpt,
+      images: [news.imageUrl || "/placeholder.svg?height=400&width=800"],
+    },
+  }
+}
 
 export default function NewsPage() {
   const params = useParams()
@@ -32,69 +83,6 @@ export default function NewsPage() {
 
     fetchNews()
   }, [params.id])
-
-  // Update meta tags when news is loaded for better social sharing
-  useEffect(() => {
-    if (news) {
-      // Update document title
-      document.title = `${news.title} - News Dikhao`
-
-      // Update meta tags for better social media sharing
-      const updateMetaTag = (property: string, content: string) => {
-        let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement
-        if (!meta) {
-          meta = document.createElement("meta")
-          meta.setAttribute("property", property)
-          document.head.appendChild(meta)
-        }
-        meta.content = content
-      }
-
-      const updateMetaName = (name: string, content: string) => {
-        let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement
-        if (!meta) {
-          meta = document.createElement("meta")
-          meta.setAttribute("name", name)
-          document.head.appendChild(meta)
-        }
-        meta.content = content
-      }
-
-      // Open Graph tags for better social media sharing
-      updateMetaTag("og:title", news.title)
-      updateMetaTag("og:description", news.excerpt)
-      updateMetaTag("og:image", news.imageUrl || "/placeholder.svg?height=400&width=800")
-      updateMetaTag("og:image:width", "800")
-      updateMetaTag("og:image:height", "400")
-      updateMetaTag("og:image:alt", news.title)
-      updateMetaTag("og:url", window.location.href)
-      updateMetaTag("og:type", "article")
-      updateMetaTag("og:site_name", "News Dikhao")
-      updateMetaTag("article:author", news.author)
-      updateMetaTag("article:published_time", news.createdAt.toISOString())
-      updateMetaTag("article:modified_time", news.updatedAt.toISOString())
-      updateMetaTag("article:section", news.category)
-      updateMetaTag("article:tag", news.tags.join(", "))
-
-      // Twitter Card tags for X sharing
-      updateMetaName("twitter:card", "summary_large_image")
-      updateMetaName("twitter:site", "@NewsDikhao")
-      updateMetaName("twitter:creator", `@${news.author}`)
-      updateMetaName("twitter:title", news.title)
-      updateMetaName("twitter:description", news.excerpt)
-      updateMetaName("twitter:image", news.imageUrl || "/placeholder.svg?height=400&width=800")
-      updateMetaName("twitter:image:alt", news.title)
-
-      // LinkedIn specific tags
-      updateMetaTag("og:image:type", "image/jpeg")
-      updateMetaTag("og:locale", "hi_IN")
-
-      // General meta tags
-      updateMetaName("description", news.excerpt)
-      updateMetaName("keywords", news.tags.join(", "))
-      updateMetaName("author", news.author)
-    }
-  }, [news])
 
   if (loading) {
     return (
