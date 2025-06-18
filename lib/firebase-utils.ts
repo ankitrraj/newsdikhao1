@@ -91,39 +91,14 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getNewsByCategory(categorySlug: string): Promise<NewsItem[]> {
   try {
-    const categories = await getCategories()
-    const category = categories.find((cat) => cat.slug === categorySlug)
-
-    if (!category) {
-      console.log("Category not found for slug:", categorySlug)
-      return []
-    }
-
-    console.log("Found category:", {
-      name: category.name,
-      slug: category.slug,
-      id: category.id
-    })
-
     const postsRef = collection(db, "posts")
     const q = query(
       postsRef,
       where("status", "==", "published"),
-      where("category", "==", category.name),
+      where("categorySlug", "==", categorySlug),
       orderBy("createdAt", "desc"),
     )
     const querySnapshot = await getDocs(q)
-
-    console.log(`Found ${querySnapshot.size} posts for category ${category.name}`)
-    
-    // Log the first few posts if any exist
-    if (querySnapshot.size > 0) {
-      console.log("Sample posts:", querySnapshot.docs.slice(0, 2).map(doc => ({
-        id: doc.id,
-        title: doc.data().title,
-        category: doc.data().category
-      })))
-    }
 
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -288,31 +263,6 @@ export async function getAllTags(): Promise<string[]> {
     return Array.from(allTags).sort()
   } catch (error) {
     console.error("Error fetching all tags:", error)
-    return []
-  }
-}
-
-export async function getNewsByCategoryName(categoryName: string): Promise<NewsItem[]> {
-  try {
-    const postsRef = collection(db, "posts")
-    const q = query(
-      postsRef,
-      where("status", "==", "published"),
-      where("category", "==", categoryName),
-      orderBy("createdAt", "desc"),
-    )
-    const querySnapshot = await getDocs(q)
-
-    console.log(`Found ${querySnapshot.size} posts for category name: ${categoryName}`)
-    
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate() || new Date(),
-      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-    })) as NewsItem[]
-  } catch (error) {
-    console.error("Error fetching news by category name:", error)
     return []
   }
 }
