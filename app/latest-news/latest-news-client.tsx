@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from "react"
 import { ArrowLeft, Clock, Newspaper } from "lucide-react"
 import Link from "next/link"
