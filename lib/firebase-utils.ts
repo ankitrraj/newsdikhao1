@@ -99,6 +99,12 @@ export async function getNewsByCategory(categorySlug: string): Promise<NewsItem[
       return []
     }
 
+    console.log("Found category:", {
+      name: category.name,
+      slug: category.slug,
+      id: category.id
+    })
+
     const postsRef = collection(db, "posts")
     const q = query(
       postsRef,
@@ -107,6 +113,17 @@ export async function getNewsByCategory(categorySlug: string): Promise<NewsItem[
       orderBy("createdAt", "desc"),
     )
     const querySnapshot = await getDocs(q)
+
+    console.log(`Found ${querySnapshot.size} posts for category ${category.name}`)
+    
+    // Log the first few posts if any exist
+    if (querySnapshot.size > 0) {
+      console.log("Sample posts:", querySnapshot.docs.slice(0, 2).map(doc => ({
+        id: doc.id,
+        title: doc.data().title,
+        category: doc.data().category
+      })))
+    }
 
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,

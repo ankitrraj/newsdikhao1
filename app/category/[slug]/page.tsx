@@ -11,6 +11,8 @@ interface CategoryPageProps {
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = params
 
+  console.log("Category page - Received slug:", slug)
+
   // Get category details first
   const category = await getCategoryBySlug(slug)
 
