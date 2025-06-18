@@ -1,4 +1,3 @@
-// Import required functions from firebase utils
 import { getNewsByCategory, getCategoryBySlug } from "@/lib/firebase-utils"
 import NewsCard from "@/components/news-card"
 import { notFound } from "next/navigation"
