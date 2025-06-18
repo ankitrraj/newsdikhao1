@@ -1,4 +1,5 @@
-import { getCategories, getNewsByCategoryName } from "@/lib/firebase-utils"
+// Import required functions from firebase utils
+import { getNewsByCategory, getCategoryBySlug } from "@/lib/firebase-utils"
 import NewsCard from "@/components/news-card"
 import { notFound } from "next/navigation"
 
@@ -11,19 +12,29 @@ interface CategoryPageProps {
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = params
 
-  // Get all categories first
-  const categories = await getCategories()
-  const category = categories.find(cat => cat.slug === slug)
+  console.log("Fetching category for slug:", slug)
+  // Get category details first
+  const category = await getCategoryBySlug(slug)
 
   if (!category) {
     console.log("Category not found for slug:", slug)
     notFound()
   }
 
-  // Get news directly by category name
-  const news = await getNewsByCategoryName(category.name)
+  console.log("Found category:", {
+    name: category.name,
+    slug: category.slug,
+    isActive: category.isActive
+  })
+
+  // Get news for this category
+  console.log("Fetching news for category name:", category.name)
+  const news = await getNewsByCategory(slug)
 
   console.log(`Category: ${category.name}, News count: ${news.length}`)
+  if (news.length === 0) {
+    console.log("No news found. First few posts in category (if any):", news.slice(0, 3))
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,7 +42,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">{category.name}</h1>
           <p className="text-gray-600">
-            {news.length > 0 ? `${news.length} समाचार उपलब्ध` : "इस श्रेणी में कोई समाचार नहीं है"}
+            {category.postCount > 0 ? `${category.postCount} समाचार उपलब्ध` : "इस श्रेणी में समाचार"}
           </p>
         </div>
 
@@ -69,7 +80,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
 export async function generateStaticParams() {
   try {
+    const { getCategories } = await import("@/lib/firebase-utils")
     const categories = await getCategories()
+
     return categories.map((category) => ({
       slug: category.slug,
     }))
