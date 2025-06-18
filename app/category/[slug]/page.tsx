@@ -1,4 +1,4 @@
-import { getNewsByCategory, getCategoryBySlug } from "@/lib/firebase-utils"
+import { getCategories, getNewsByCategoryName } from "@/lib/firebase-utils"
 import NewsCard from "@/components/news-card"
 import { notFound } from "next/navigation"
 
@@ -11,18 +11,17 @@ interface CategoryPageProps {
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = params
 
-  console.log("Category page - Received slug:", slug)
-
-  // Get category details first
-  const category = await getCategoryBySlug(slug)
+  // Get all categories first
+  const categories = await getCategories()
+  const category = categories.find(cat => cat.slug === slug)
 
   if (!category) {
     console.log("Category not found for slug:", slug)
     notFound()
   }
 
-  // Get news for this category
-  const news = await getNewsByCategory(slug)
+  // Get news directly by category name
+  const news = await getNewsByCategoryName(category.name)
 
   console.log(`Category: ${category.name}, News count: ${news.length}`)
 
@@ -32,7 +31,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">{category.name}</h1>
           <p className="text-gray-600">
-            {category.postCount > 0 ? `${category.postCount} समाचार उपलब्ध` : "इस श्रेणी में समाचार"}
+            {news.length > 0 ? `${news.length} समाचार उपलब्ध` : "इस श्रेणी में कोई समाचार नहीं है"}
           </p>
         </div>
 
@@ -70,9 +69,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
 export async function generateStaticParams() {
   try {
-    const { getCategories } = await import("@/lib/firebase-utils")
     const categories = await getCategories()
-
     return categories.map((category) => ({
       slug: category.slug,
     }))

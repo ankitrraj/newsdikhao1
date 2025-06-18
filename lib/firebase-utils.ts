@@ -291,3 +291,28 @@ export async function getAllTags(): Promise<string[]> {
     return []
   }
 }
+
+export async function getNewsByCategoryName(categoryName: string): Promise<NewsItem[]> {
+  try {
+    const postsRef = collection(db, "posts")
+    const q = query(
+      postsRef,
+      where("status", "==", "published"),
+      where("category", "==", categoryName),
+      orderBy("createdAt", "desc"),
+    )
+    const querySnapshot = await getDocs(q)
+
+    console.log(`Found ${querySnapshot.size} posts for category name: ${categoryName}`)
+    
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as NewsItem[]
+  } catch (error) {
+    console.error("Error fetching news by category name:", error)
+    return []
+  }
+}
