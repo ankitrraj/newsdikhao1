@@ -91,6 +91,7 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getNewsByCategory(categorySlug: string): Promise<NewsItem[]> {
   try {
+    console.log(`Starting to fetch news for category: ${categorySlug}`);
     const postsRef = collection(db, "posts")
     const q = query(
       postsRef,
@@ -98,16 +99,29 @@ export async function getNewsByCategory(categorySlug: string): Promise<NewsItem[
       where("categorySlug", "==", categorySlug),
       orderBy("createdAt", "desc"),
     )
+    console.log(`Query created for category: ${categorySlug}`);
+    
     const querySnapshot = await getDocs(q)
+    console.log(`Got query snapshot for category ${categorySlug}. Document count: ${querySnapshot.size}`);
 
-    return querySnapshot.docs.map((doc) => ({
+    const news = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as NewsItem[]
+
+    console.log(`Processed ${news.length} news items for category ${categorySlug}`);
+    return news;
   } catch (error) {
-    console.error("Error fetching news by category:", error)
+    console.error("Error fetching news by category:", error);
+    if (error instanceof Error) {
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        categorySlug
+      });
+    }
     return []
   }
 }
@@ -145,11 +159,42 @@ export async function incrementViewCount(newsId: string): Promise<void> {
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   try {
-    const categories = await getCategories()
-    return categories.find((cat) => cat.slug === slug) || null
+    console.log(`Starting to fetch category with slug: ${slug}`);
+    const categoriesRef = collection(db, "categories")
+    const q = query(categoriesRef, where("slug", "==", slug), where("isActive", "==", true))
+    const querySnapshot = await getDocs(q)
+    
+    console.log(`Got query snapshot for category ${slug}. Document count: ${querySnapshot.size}`);
+    
+    if (querySnapshot.empty) {
+      console.log(`No category found with slug: ${slug}`);
+      return null;
+    }
+
+    const category = {
+      id: querySnapshot.docs[0].id,
+      ...querySnapshot.docs[0].data(),
+      createdAt: querySnapshot.docs[0].data().createdAt?.toDate() || new Date(),
+    } as Category;
+
+    console.log(`Found category:`, {
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      isActive: category.isActive
+    });
+
+    return category;
   } catch (error) {
-    console.error("Error fetching category by slug:", error)
-    return null
+    console.error("Error fetching category by slug:", error);
+    if (error instanceof Error) {
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        slug
+      });
+    }
+    return null;
   }
 }
 
