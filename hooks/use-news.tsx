@@ -19,6 +19,7 @@ export function useLatestNews(limitCount = 5) {
 
   useEffect(() => {
     try {
+      console.log("🔍 Fetching latest news...")
       const postsRef = collection(db, "posts")
       const q = query(
         postsRef,
@@ -30,12 +31,22 @@ export function useLatestNews(limitCount = 5) {
       const unsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          const newsData = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-            createdAt: doc.data().createdAt?.toDate() || new Date(),
-            updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-          })) as NewsItem[]
+          const newsData = snapshot.docs.map((doc) => {
+            const data = doc.data()
+            console.log("📰 News item found:", {
+              id: doc.id,
+              title: data.title,
+              category: data.category,
+              categoryName: data.categoryName,
+              categorySlug: data.categorySlug
+            })
+            return {
+              id: doc.id,
+              ...data,
+              createdAt: data.createdAt?.toDate() || new Date(),
+              updatedAt: data.updatedAt?.toDate() || new Date(),
+            }
+          }) as NewsItem[]
           setNews(newsData)
           setLoading(false)
         },

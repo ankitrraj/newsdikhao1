@@ -3,17 +3,20 @@ export interface NewsItem {
   title: string
   content: string
   excerpt: string
+  slug: string
   category: string
-  tags: string[]
-  status: "published" | "draft"
-  isBreaking: boolean
-  addToSlider: boolean
-  imageUrl: string
+  categoryName: string
+  status: "draft" | "published" | "archived"
+  featuredImage?: string
+  author: string
+  authorName: string
   createdAt: Date
   updatedAt: Date
-  author: string
-  views: number
-  language: "hindi" | "english"
+  tags?: string[]
+  views?: number
+  likes?: number
+  shares?: number
+  comments?: number
 }
 
 export interface Category {
