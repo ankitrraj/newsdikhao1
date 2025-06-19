@@ -8,7 +8,6 @@ export interface NewsItem {
   categoryName: string
   status: "draft" | "published" | "archived"
   featuredImage?: string
-  imageUrl?: string
   author: string
   authorName: string
   createdAt: Date
@@ -18,8 +17,6 @@ export interface NewsItem {
   likes?: number
   shares?: number
   comments?: number
-  isBreaking?: boolean
-  language?: "english" | "hindi"
 }
 
 export interface Category {

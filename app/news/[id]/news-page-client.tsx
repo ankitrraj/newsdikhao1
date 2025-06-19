@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import ShareButtons from "@/components/share-buttons"
 import { incrementViewCount } from "@/lib/firebase-utils"
 import type { NewsItem } from "@/lib/types"
-import MonetagAd from "@/components/monetag-ad"
 
 interface NewsPageClientProps {
   initialNews: NewsItem | null
@@ -18,20 +17,12 @@ interface NewsPageClientProps {
 
 export default function NewsPageClient({ initialNews, params }: NewsPageClientProps) {
   const [news, setNews] = useState<NewsItem | null>(initialNews)
-  const [showAds, setShowAds] = useState(false)
 
   useEffect(() => {
     // Increment view count
     if (news) {
       incrementViewCount(news.id)
     }
-
-    // Show ads after a delay for better user experience
-    const timer = setTimeout(() => {
-      setShowAds(true)
-    }, 3000) // 3 second delay
-
-    return () => clearTimeout(timer)
   }, [news])
 
   if (!news) {
@@ -124,17 +115,6 @@ export default function NewsPageClient({ initialNews, params }: NewsPageClientPr
             </div>
           </div>
         </div>
-
-        {/* Only show ads after delay */}
-        {showAds && (
-          <>
-            {/* Vignette Ad */}
-            <MonetagAd type="vignette" zoneId="152896" className="my-8" />
-
-            {/* Interstitial Ad */}
-            <MonetagAd type="interstitial" zoneId="152896" className="my-8" />
-          </>
-        )}
 
         {/* Tags */}
         {news.tags && news.tags.length > 0 && (
