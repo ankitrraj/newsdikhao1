@@ -7,6 +7,7 @@ import { useLatestNews, useBreakingNews } from "@/hooks/use-news"
 import NewsSlider from "@/components/news-slider"
 import NewsCard from "@/components/news-card"
 import BreakingNewsTicker from "@/components/breaking-news-ticker"
+import MonetagAd from "@/components/monetag-ad"
 
 export default function HomePage() {
   const { news: latestNews, loading: latestLoading } = useLatestNews(10)
@@ -18,6 +19,11 @@ export default function HomePage() {
       {!breakingLoading && breakingNews.length > 0 && (
         <BreakingNewsTicker news={breakingNews.slice(0, 3)} />
       )}
+
+      {/* Top Ad */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <MonetagAd slotId="your-slot-id-1" />
+      </div>
 
       {/* News Slider */}
       {!breakingLoading && breakingNews.length > 0 && (
@@ -59,6 +65,11 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/* Middle Ad */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <MonetagAd slotId="your-slot-id-2" />
+      </div>
 
       {/* Breaking News Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white rounded-lg mx-4 shadow-sm">
