@@ -8,10 +8,21 @@ import NewsCard from "@/components/news-card"
 import { db } from "@/lib/firebase"
 import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore"
 import type { NewsItem } from "@/lib/types"
+import MonetagAd from "@/components/monetag-ad"
 
 export default function LatestNewsClient() {
   const [latestNews, setLatestNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [showAds, setShowAds] = useState(false)
+
+  useEffect(() => {
+    // Show ads after a delay for better user experience
+    const timer = setTimeout(() => {
+      setShowAds(true)
+    }, 3000) // 3 second delay
+
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     const postsRef = collection(db, "posts")
@@ -80,6 +91,13 @@ export default function LatestNewsClient() {
           </div>
         </div>
 
+        {/* First Ad Section */}
+        {showAds && (
+          <div className="mb-8">
+            <MonetagAd type="vignette" zoneId="152896" className="my-4" />
+          </div>
+        )}
+
         {/* News Grid */}
         {latestNews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -97,6 +115,13 @@ export default function LatestNewsClient() {
                 <Button>होम पर वापस जाएं</Button>
               </Link>
             </div>
+          </div>
+        )}
+
+        {/* Second Ad Section */}
+        {showAds && (
+          <div className="mt-8">
+            <MonetagAd type="interstitial" zoneId="152896" className="my-4" />
           </div>
         )}
 

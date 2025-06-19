@@ -1,6 +1,8 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import Script from "next/script"
 import { ArrowRight, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLatestNews, useBreakingNews } from "@/hooks/use-news"
@@ -12,23 +14,39 @@ import MonetagAd from "@/components/monetag-ad"
 export default function HomePage() {
   const { news: latestNews, loading: latestLoading } = useLatestNews(10)
   const { news: breakingNews, loading: breakingLoading } = useBreakingNews(5)
+  const [showAds, setShowAds] = useState(false)
+
+  useEffect(() => {
+    // Show ads after a delay for better user experience
+    const timer = setTimeout(() => {
+      setShowAds(true)
+    }, 3000) // 3 second delay
+
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <main className="min-h-screen bg-gray-50">
+      <Script id="interstitial-native-ad" strategy="afterInteractive">
+        {`(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('groleegni.net',9466671,document.createElement('script'))`}
+      </Script>
+
       {/* Breaking News Ticker */}
       {!breakingLoading && breakingNews.length > 0 && (
         <BreakingNewsTicker news={breakingNews.slice(0, 3)} />
       )}
 
-      {/* Top Ad */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <MonetagAd slotId="your-slot-id-1" />
-      </div>
-
       {/* News Slider */}
       {!breakingLoading && breakingNews.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <NewsSlider news={breakingNews} />
+        </div>
+      )}
+
+      {/* First Ad Section */}
+      {showAds && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <MonetagAd type="vignette" zoneId="152896" className="my-4" />
         </div>
       )}
 
@@ -66,10 +84,12 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* Middle Ad */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <MonetagAd slotId="your-slot-id-2" />
-      </div>
+      {/* Second Ad Section */}
+      {showAds && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <MonetagAd type="interstitial" zoneId="152896" className="my-4" />
+        </div>
+      )}
 
       {/* Breaking News Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-white rounded-lg mx-4 shadow-sm">

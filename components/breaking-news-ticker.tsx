@@ -65,9 +65,6 @@ export default function BreakingNewsTicker({ news }: BreakingNewsTickerProps) {
                       <span className="text-xs sm:text-sm font-medium">
                         {item.title.length > 80 ? `${item.title.substring(0, 80)}...` : item.title}
                       </span>
-
-                      {/* Category Badge */}
-                      <Badge className="bg-blue-600/80 text-white px-2 py-0.5 text-xs">{item.category}</Badge>
                     </div>
                   </Link>
 
