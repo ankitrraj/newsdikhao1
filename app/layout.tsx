@@ -5,6 +5,7 @@ import "./globals.css"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
+import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -45,6 +46,21 @@ export default function RootLayout({
         <meta name="theme-color" content="#2563eb" />
         <meta name="monetag" content="8eac6cc11633ba631dc6516ab651e8bb" />
         <link rel="icon" href="/favicon.ico" />
+        
+        {/* Google Analytics */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-9JPCFTNS08"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-9JPCFTNS08');
+          `}
+        </Script>
       </head>
       <body className={inter.className}>
         <Navbar />
