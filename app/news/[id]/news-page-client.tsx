@@ -20,6 +20,16 @@ export default function NewsPageClient({ initialNews, params }: NewsPageClientPr
   const [news, setNews] = useState<NewsItem | null>(initialNews)
 
   useEffect(() => {
+    // Debug logs for image URL
+    if (news) {
+      console.log("News Data:", {
+        id: news.id,
+        title: news.title,
+        featuredImage: news.featuredImage,
+        imageUrl: (news as any).imageUrl // Check if imageUrl exists
+      });
+    }
+    
     // Increment view count
     if (news) {
       incrementViewCount(news.id)
@@ -94,16 +104,20 @@ export default function NewsPageClient({ initialNews, params }: NewsPageClientPr
             <ShareButtons title={news.title} excerpt={news.excerpt} imageUrl={news.featuredImage} url={`/news/${news.id}`} />
           </header>
 
-                    {/* Featured Image */}
-        <div className="relative h-64 sm:h-80 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
-          <Image
-            src={news.featuredImage || "/placeholder.svg?height=400&width=800"}
-            alt={news.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+          {/* Featured Image */}
+          <div className="mb-8">
+            <div className="relative w-full flex justify-center">
+              <Image
+                src={news.featuredImage || "/placeholder.svg"}
+                alt={news.title}
+                width={800}
+                height={450}
+                className="rounded-lg max-w-full h-auto object-contain"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
+              />
+            </div>
+          </div>
 
           {/* Article Content */}
           <div className="mb-8">

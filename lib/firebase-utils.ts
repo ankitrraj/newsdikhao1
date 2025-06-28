@@ -118,11 +118,23 @@ export async function getNewsById(id: string): Promise<NewsItem | null> {
     const docSnap = await getDoc(postRef)
 
     if (docSnap.exists()) {
+      const data = docSnap.data();
+      // Use imageUrl as fallback if featuredImage is not available
+      const imageField = data.featuredImage || data.imageUrl || null;
+      
+      console.log("Firebase Document Data:", {
+        id: docSnap.id,
+        featuredImage: data.featuredImage,
+        imageUrl: data.imageUrl,
+        finalImageUrl: imageField
+      });
+
       return {
         id: docSnap.id,
-        ...docSnap.data(),
-        createdAt: docSnap.data().createdAt?.toDate() || new Date(),
-        updatedAt: docSnap.data().updatedAt?.toDate() || new Date(),
+        ...data,
+        featuredImage: imageField,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
       } as NewsItem
     }
     return null
