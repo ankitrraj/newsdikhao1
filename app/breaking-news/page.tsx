@@ -3,6 +3,25 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import NewsCard from "@/components/news-card"
 import { getBreakingNews } from "@/lib/firebase-utils"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Breaking News - News Dikhao",
+  description: "Latest breaking news and updates from around the world. Stay informed with real-time news alerts on News Dikhao.",
+  keywords: "breaking news, latest news, ताज़ा खबर, ब्रेकिंग न्यूज़, News Dikhao",
+  openGraph: {
+    title: "Breaking News - News Dikhao",
+    description: "Latest breaking news and updates from around the world.",
+    url: "https://www.newsdikhao.co.in/breaking-news",
+    images: [
+      {
+        url: "https://www.newsdikhao.co.in/og-default-image.webp",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+}
 
 export default async function BreakingNewsPage() {
   const breakingNews = await getBreakingNews(50) // Get more breaking news

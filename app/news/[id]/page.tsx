@@ -1,53 +1,76 @@
-import type { Metadata } from "next"
+import type { Metadata, ResolvingMetadata } from "next"
 import { getNewsById } from "@/lib/firebase-utils"
 import NewsPageClient from "./news-page-client"
 
 // Make the page server-side rendered
 export const dynamic = "force-dynamic"
 
+type Props = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
 // Generate metadata for the page
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const news = await getNewsById(params.id)
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // Fetch news data
+  const news = await getNewsById(params.id);
+  
+  // Fallback values if news not found
   if (!news) {
     return {
       title: "News Not Found - News Dikhao",
-      description: "The requested news article could not be found."
-    }
+      description: "The requested news article could not be found.",
+    };
   }
 
-  const fullUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://newsdikhao.co.in"}/news/${news.id}`
+  // Extract description from excerpt or content
+  const description = news.excerpt || news.content?.substring(0, 150) || "Read the latest news on News Dikhao";
   
+  // Generate keywords from tags and category
+  const keywords = [
+    ...(news.tags || []),
+    news.category,
+    "हिंदी न्यूज़",
+    "ब्रेकिंग न्यूज़",
+    "News Dikhao"
+  ].filter(Boolean).join(", ");
+
+  // Construct metadata from news data
   return {
     title: `${news.title} - News Dikhao`,
-    description: news.excerpt,
+    description: description,
+    keywords: keywords,
+    authors: news.author ? [{ name: news.author }] : undefined,
+    category: news.category,
     openGraph: {
       title: news.title,
-      description: news.excerpt,
-      url: fullUrl,
+      description: description,
+      url: `https://www.newsdikhao.co.in/news/${params.id}`,
       siteName: "News Dikhao",
+      locale: "hi_IN",
+      type: "article",
+      publishedTime: news.createdAt ? new Date(news.createdAt).toISOString() : undefined,
+      modifiedTime: news.updatedAt ? new Date(news.updatedAt).toISOString() : undefined,
       images: [
         {
-          url: news.imageUrl || "/placeholder.svg?height=400&width=800",
-          width: 800,
-          height: 400,
+          url: news.featuredImage || "https://www.newsdikhao.co.in/og-default-image.webp",
+          width: 1200,
+          height: 630,
           alt: news.title,
         },
       ],
-      locale: "hi_IN",
-      type: "article",
-      authors: news.author,
-      publishedTime: news.createdAt.toISOString(),
-      modifiedTime: news.updatedAt.toISOString(),
-      section: news.category,
-      tags: news.tags,
     },
     twitter: {
       card: "summary_large_image",
-      site: "@NewsDikhao",
-      creator: `@${news.author}`,
       title: news.title,
-      description: news.excerpt,
-      images: [news.imageUrl || "/placeholder.svg?height=400&width=800"],
+      description: description,
+      images: news.featuredImage ? [news.featuredImage] : undefined,
+    },
+    alternates: {
+      canonical: `https://www.newsdikhao.co.in/news/${params.id}`,
     },
   }
 }

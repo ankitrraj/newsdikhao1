@@ -90,6 +90,33 @@ export default function Navbar() {
               </DropdownMenu>
             )}
 
+            {/* Important Links Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                  महत्वपूर्ण लिंक
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/privacy-policy" className="w-full cursor-pointer">
+                    गोपनीयता नीति
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/terms-and-conditions" className="w-full cursor-pointer">
+                    नियम और शर्तें
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/contact" className="w-full cursor-pointer">
+                    संपर्क करें
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             {/* Search Button */}
             <Button
               variant="outline"
@@ -147,6 +174,31 @@ export default function Navbar() {
                   {category.postCount > 0 && <span className="ml-2 text-xs text-gray-500">({category.postCount})</span>}
                 </Link>
               ))}
+              
+              {/* Important Pages Links */}
+              <div className="border-t border-gray-200 mt-2 pt-2">
+                <Link
+                  href="/privacy-policy"
+                  className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  गोपनीयता नीति
+                </Link>
+                <Link
+                  href="/terms-and-conditions"
+                  className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  नियम और शर्तें
+                </Link>
+                <Link
+                  href="/contact"
+                  className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  संपर्क करें
+                </Link>
+              </div>
             </div>
           </div>
         )}

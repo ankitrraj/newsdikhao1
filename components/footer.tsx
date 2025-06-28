@@ -224,10 +224,10 @@ export default function Footer() {
               © {new Date().getFullYear()} News Dikhao. सभी अधिकार सुरक्षित।
             </div>
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">
                 गोपनीयता नीति
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/terms-and-conditions" className="text-gray-400 hover:text-white transition-colors">
                 नियम और शर्तें
               </Link>
               <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">

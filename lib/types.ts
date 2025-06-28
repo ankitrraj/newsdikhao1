@@ -17,6 +17,8 @@ export interface NewsItem {
   likes?: number
   shares?: number
   comments?: number
+  isBreaking?: boolean
+  language?: "hindi" | "english"
 }
 
 export interface Category {

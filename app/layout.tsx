@@ -9,23 +9,20 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "News Dikhao - Latest News & Updates",
-  description: "Stay updated with the latest news and current affairs from around the world.",
+  title: "News Dikhao - हिंदी में ब्रेकिंग न्यूज़, मनोरंजन, खेल और राजनीति",
+  description: "News Dikhao पर पढ़ें हिंदी में ब्रेकिंग न्यूज़, मनोरंजन, क्रिकेट, राशिफल, और भारत की सबसे ताज़ा खबरें।",
+  keywords: "हिंदी न्यूज़, ब्रेकिंग न्यूज़, बॉलीवुड न्यूज़, क्रिकेट न्यूज़, राशिफल, राजनीति, News Dikhao",
   openGraph: {
-    title: "News Dikhao - Latest News & Updates",
-    description: "Stay updated with the latest news and current affairs from around the world.",
-    url: "https://your-domain.com",
-    siteName: "News Dikhao",
+    title: "News Dikhao - हिंदी में ब्रेकिंग न्यूज़",
+    description: "ताज़ा खबरें पढ़ें सिर्फ News Dikhao पर",
+    url: "https://www.newsdikhao.co.in",
     images: [
       {
-        url: "https://res.cloudinary.com/divmafjmq/image/upload/v1750128275/newsdikhao_posts/uglrpjygru2op6xgmwba.jpg",
+        url: "https://www.newsdikhao.co.in/og-default-image.webp",
         width: 1200,
         height: 630,
-        alt: "News Dikhao",
       },
     ],
-    locale: "hi_IN",
-    type: "website",
   },
   twitter: {
     card: "summary_large_image",
