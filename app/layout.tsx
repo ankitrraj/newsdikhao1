@@ -47,6 +47,14 @@ export default function RootLayout({
         <meta name="monetag" content="8eac6cc11633ba631dc6516ab651e8bb" />
         <link rel="icon" href="/favicon.ico" />
         
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8290907430695470"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+        
         {/* Google Analytics */}
         <Script
           async
