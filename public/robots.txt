@@ -1,4 +1,10 @@
+# *
 User-agent: *
 Allow: /
 
-Sitemap: https://www.newsdikhao.co.in/sitemap.xml 
+# Host
+Host: https://www.newsdikhao.co.in
+
+# Sitemaps
+Sitemap: https://www.newsdikhao.co.in/sitemap.xml
+Sitemap: https://www.newsdikhao.co.in/server-sitemap.xml
