@@ -48,11 +48,10 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         
         {/* Google AdSense */}
-        <Script
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8290907430695470"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
         
         {/* Google Analytics */}
